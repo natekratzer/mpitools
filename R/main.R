@@ -49,11 +49,15 @@ df <- read_csv("./mpi_13_18_raw.csv",
                    DIFFMOB = col_double(),
                    DIFFCARE = col_double()
                  )
-               )
+               ) %>%
+  select(-EDUC, -EMPSTATD, -CILAPTOP, -CISMRTPHN, -CITABLET, -CIHAND, -CIOTHCOMP) #unnecessary fields auto selected to go with empstat and educd
 
 df_18_lou <- df %>%
   filter(YEAR == 2018 & MET2013 == 31140) #louisville MSA in 2018 in order to test
 
-source(create_mpi.R)
+source('~/Documents/pers/mpitools/R/create_mpi.R')
+
+df_test <- df_18_lou %>%
+  add_binary_indicators()
 
 
