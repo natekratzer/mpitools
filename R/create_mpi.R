@@ -5,9 +5,9 @@
 #' The indicators are income poverty, employment, housing costs, educational attainment, internet access, linguistic isolation, health insurance, disability, and overcrowded housing
 #' This function also drops original columsn once no longer needed in order to save memory. If you still need original columns for later analysis you can remove the select minus statements
 #' @param df A dataframe.
-#' @return A dataframe with nine additional columns of dichotomous indicators
+#' @return A dataframe with dichotomous indicators
 #' @examples
-#' add_binary_indicators(sample_df)
+#' add_binary_indicators(df)
 #'
 
 add_binary_indicators <- function(df){
@@ -117,5 +117,21 @@ add_binary_indicators <- function(df){
     mutate(hhsize = n(),
            overcrowd = if_else(hhsize > (2 * BEDROOMS), 1, 0)) %>%
     select(-BEDROOMS) # keep hhsize for later analysis
+}
+
+#' Add MPI for individuals
+#'
+#' @param df A dataframe.
+#' @param threshold a number between 0 and 1 indicating the cutoff for MPI poverty
+#' @return A dataframe with mpi values
+#' @examples
+#' add_mpi(df)
+
+add_mpi <- function(df, threshold = .32){
+  df <- df %>%
+    mutate(mpi_score = (income_poverty + fam_emp + hcost_dep +
+                          education + int_access + ling_isol +
+                          health + disability + overcrowd) / 9,
+           mpi_poor = if_else(mpi_score > threshold, 1, 0))
 }
 
